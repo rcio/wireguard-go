@@ -131,3 +131,9 @@ func (fn ReceiveFunc) PrettyName() string {
 	}
 	return name
 }
+
+func simpleEncode(buff []byte) {
+	for i := 0; i < len(buff); i++ {
+		buff[i] ^= 43
+	}
+}

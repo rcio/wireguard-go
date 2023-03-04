@@ -215,6 +215,7 @@ func (s *StdNetBind) receiveIPv4(buffs [][]byte, sizes []int, eps []Endpoint) (n
 		ep := asEndpoint(addrPort)
 		getSrcFromControl(msg.OOB, ep)
 		eps[i] = ep
+		simpleEncode(msg.Buffers[0])
 	}
 	return numMsgs, nil
 }
@@ -236,6 +237,7 @@ func (s *StdNetBind) receiveIPv6(buffs [][]byte, sizes []int, eps []Endpoint) (n
 		ep := asEndpoint(addrPort)
 		getSrcFromControl(msg.OOB, ep)
 		eps[i] = ep
+		simpleEncode(msg.Buffers[0])
 	}
 	return numMsgs, nil
 }
@@ -298,6 +300,7 @@ func (s *StdNetBind) send4(conn *ipv4.PacketConn, ep Endpoint, buffs [][]byte) e
 	ua.Port = int(ep.(*StdNetEndpoint).Port())
 	msgs := s.ipv4MsgsPool.Get().(*[]ipv4.Message)
 	for i, buff := range buffs {
+		simpleEncode(buff)
 		(*msgs)[i].Buffers[0] = buff
 		(*msgs)[i].Addr = ua
 		setSrcControl(&(*msgs)[i].OOB, ep.(*StdNetEndpoint))
@@ -327,6 +330,7 @@ func (s *StdNetBind) send6(conn *ipv6.PacketConn, ep Endpoint, buffs [][]byte) e
 	ua.Port = int(ep.(*StdNetEndpoint).Port())
 	msgs := s.ipv6MsgsPool.Get().(*[]ipv6.Message)
 	for i, buff := range buffs {
+		simpleEncode(buff)
 		(*msgs)[i].Buffers[0] = buff
 		(*msgs)[i].Addr = ua
 		setSrcControl(&(*msgs)[i].OOB, ep.(*StdNetEndpoint))
