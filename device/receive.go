@@ -186,18 +186,24 @@ func (device *Device) RoutineReceiveIncoming(maxBatchSize int, recv conn.Receive
 			// otherwise it is a fixed size & handshake related packet
 
 			case MessageInitiationType:
-				if len(packet) != MessageInitiationSize {
+				if len(packet) < MessageInitiationSize {
 					continue
+				} else {
+					packet = packet[:MessageInitiationSize]
 				}
 
 			case MessageResponseType:
-				if len(packet) != MessageResponseSize {
+				if len(packet) < MessageResponseSize {
 					continue
+				} else {
+					packet = packet[:MessageResponseSize]
 				}
 
 			case MessageCookieReplyType:
-				if len(packet) != MessageCookieReplySize {
+				if len(packet) < MessageCookieReplySize {
 					continue
+				} else {
+					packet = packet[:MessageCookieReplySize]
 				}
 
 			default:

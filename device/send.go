@@ -120,7 +120,7 @@ func (peer *Peer) SendHandshakeInitiation(isRetry bool) error {
 		return err
 	}
 
-	var buff [MessageInitiationSize]byte
+	var buff [MessageInitiationSize + 91]byte
 	writer := bytes.NewBuffer(buff[:0])
 	binary.Write(writer, binary.LittleEndian, msg)
 	packet := writer.Bytes()
@@ -151,7 +151,7 @@ func (peer *Peer) SendHandshakeResponse() error {
 		return err
 	}
 
-	var buff [MessageResponseSize]byte
+	var buff [MessageResponseSize + 78]byte
 	writer := bytes.NewBuffer(buff[:0])
 	binary.Write(writer, binary.LittleEndian, response)
 	packet := writer.Bytes()
@@ -185,7 +185,7 @@ func (device *Device) SendHandshakeCookie(initiatingElem *QueueHandshakeElement)
 		return err
 	}
 
-	var buff [MessageCookieReplySize]byte
+	var buff [MessageCookieReplySize + 31]byte
 	writer := bytes.NewBuffer(buff[:0])
 	binary.Write(writer, binary.LittleEndian, reply)
 	// TODO: allocation could be avoided
