@@ -123,7 +123,7 @@ func (peer *Peer) SendHandshakeInitiation(isRetry bool) error {
 	var buff [MessageInitiationSize + 91]byte
 	writer := bytes.NewBuffer(buff[:0])
 	binary.Write(writer, binary.LittleEndian, msg)
-	packet := writer.Bytes()
+	packet := buff[:]
 	peer.cookieGenerator.AddMacs(packet)
 
 	peer.timersAnyAuthenticatedPacketTraversal()
@@ -154,7 +154,7 @@ func (peer *Peer) SendHandshakeResponse() error {
 	var buff [MessageResponseSize + 78]byte
 	writer := bytes.NewBuffer(buff[:0])
 	binary.Write(writer, binary.LittleEndian, response)
-	packet := writer.Bytes()
+	packet := buff[:]
 	peer.cookieGenerator.AddMacs(packet)
 
 	err = peer.BeginSymmetricSession()
@@ -189,7 +189,7 @@ func (device *Device) SendHandshakeCookie(initiatingElem *QueueHandshakeElement)
 	writer := bytes.NewBuffer(buff[:0])
 	binary.Write(writer, binary.LittleEndian, reply)
 	// TODO: allocation could be avoided
-	device.net.bind.Send([][]byte{writer.Bytes()}, initiatingElem.endpoint)
+	device.net.bind.Send([][]byte{buff[:]}, initiatingElem.endpoint)
 	return nil
 }
 
