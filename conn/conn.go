@@ -134,6 +134,6 @@ func (fn ReceiveFunc) PrettyName() string {
 
 func simpleEncode(buff []byte) {
 	for i := 0; i < len(buff); i++ {
-		buff[i] ^= 43
+		buff[i] ^= 143
 	}
 }
