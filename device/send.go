@@ -120,16 +120,17 @@ func (peer *Peer) SendHandshakeInitiation(isRetry bool) error {
 		return err
 	}
 
-	var buff [MessageInitiationSize + 91]byte
+	var buff [MessageInitiationSize]byte
 	writer := bytes.NewBuffer(buff[:0])
 	binary.Write(writer, binary.LittleEndian, msg)
-	packet := buff[:]
+	packet := writer.Bytes()
 	peer.cookieGenerator.AddMacs(packet)
 
 	peer.timersAnyAuthenticatedPacketTraversal()
 	peer.timersAnyAuthenticatedPacketSent()
 
-	err = peer.SendBuffers([][]byte{packet})
+	var padding [91]byte
+	err = peer.SendBuffers([][]byte{append(packet, padding[:]...)})
 	if err != nil {
 		peer.device.log.Errorf("%v - Failed to send handshake initiation: %v", peer, err)
 	}
@@ -151,10 +152,10 @@ func (peer *Peer) SendHandshakeResponse() error {
 		return err
 	}
 
-	var buff [MessageResponseSize + 78]byte
+	var buff [MessageResponseSize]byte
 	writer := bytes.NewBuffer(buff[:0])
 	binary.Write(writer, binary.LittleEndian, response)
-	packet := buff[:]
+	packet := writer.Bytes()
 	peer.cookieGenerator.AddMacs(packet)
 
 	err = peer.BeginSymmetricSession()
@@ -168,7 +169,8 @@ func (peer *Peer) SendHandshakeResponse() error {
 	peer.timersAnyAuthenticatedPacketSent()
 
 	// TODO: allocation could be avoided
-	err = peer.SendBuffers([][]byte{packet})
+	var padding [73]byte
+	err = peer.SendBuffers([][]byte{append(packet, padding[:]...)})
 	if err != nil {
 		peer.device.log.Errorf("%v - Failed to send handshake response: %v", peer, err)
 	}
